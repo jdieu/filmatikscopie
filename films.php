@@ -35,10 +35,10 @@
 									
 									for ($i= 0; $donnees_news = $req_news->fetch(); $i++)
 									{
-										// if ($i >= 40)
-										// {
-											// break 1;
-										// }
+										if ($i >= 40)
+										{
+											break 1;
+										}
 								?>
 								<li class="slide xlarge-25 large-25 medium-50 small-50 tiny-100">
 									<a style="text-decoration : none" href="film.php?id=<?php echo $donnees_news['id']; ?>">
@@ -68,8 +68,12 @@
 
 					<div class="panel" style="padding-top: 30px">
 						<?php
-							$min_ligne = $_GET['page'];
-							$max_ligne = $_GET['page'] + 19;
+							$max_ligne = $_GET['page'] * 20;
+							if ($_GET['page'] == 1)
+							{
+								$min_ligne = 1;
+							}
+							$min_ligne = $max_ligne - 19;
 							
 							$req_list = $bdd->prepare('SELECT * FROM films WHERE id BETWEEN :min_ligne AND :max_ligne ORDER BY titreFilm'); // PROBLEME REQUETE
 							$req_list->execute(array(':min_ligne' => $min_ligne, ':max_ligne' => $max_ligne)) or die(print_r($bdd->errorInfo()));
@@ -83,7 +87,6 @@
 							echo '<div class="column-group gutters">';
 							
 							$compteur = 0;
-							// $compteur_film = 0;
 							while ($donnees_list = $req_list->fetch())
 							{
 								if ($compteur == 2)
@@ -113,12 +116,6 @@
 						</div>
 						<?php
 								$compteur++;
-								// $compteur_film++;
-								
-								// if ($compteur_film == 20)
-								// {
-									// break;
-								// }
 							}
 						?>
 						</div>
@@ -128,15 +125,37 @@
 								<li <?php if($_GET['page'] == 1){echo 'style="display: none"';} ?>><a href="films.php?page=1">Première</a></li>
 								<li <?php if($_GET['page'] == 1){echo 'class="disabled"';} ?>><a href="films.php?page=<?php echo $_GET['page'] - 1; ?>">Précédent</a></li>
 								<?php
-									$nb_page = $nb_films / 4;
-									$min_page = $_GET['page'];
-									$max_page = $min_page + 9;
+									$nb_page = floor($nb_films / 20);
 									
-									for ($p = $min_page; $p <= $nb_page; $p++)
+									if (($nb_films % 20) != 0)
 									{
-										if ($p >= $min_page && $p <= $max_page)
+										$nb_page++;
+									}
+									
+									$page_actuelle = $_GET['page'];
+									if ($page_actuelle == 1)
+									{
+										$min_page = 1;
+										$max_page = 10;
+									}
+									else
+									{
+										$min_page = $page_actuelle - 4;
+										$max_page = $page_actuelle + 5;
+									}
+									
+									for ($p = $min_page; $p <= $max_page; $p++)
+									{
+										if ($p > 0)
 										{
-											echo '<li><a href="films.php?page=' . $p . '">' . $p . '</a></li>';
+											if ($p == $_GET['page'])
+											{
+												echo '<li class="active"><a href="films.php?page=' . $p . '">' . $p . '</a></li>';
+											}
+											else
+											{
+												echo '<li><a href="films.php?page=' . $p . '">' . $p . '</a></li>';
+											}
 										}
 									}
 								?>
