@@ -1,0 +1,5 @@
+sort tous les films liés à l'id genre 1
+SELECT * FROM films JOIN corresgenrefilm ON films.id = corresgenrefilm.idFilm WHERE corresgenrefilm.idGenre = 1
+
+sort tous les genres liés au film d'id 1
+SELECT * FROM genres JOIN corresgenrefilm ON genre.id = corresgenrefilm.idGenre WHERE corresgenrefilm.idFilm = 1
